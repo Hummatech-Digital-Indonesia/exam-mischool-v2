@@ -19,7 +19,7 @@ export default defineAppConfig({
         enabled: true,
         logo: {
           component: 'TairoLogo',
-          props: { class: 'text-primary-600 h-10 w-20' },
+          props: { class: 'text-primary-600 w-24' },
         },
         header: {
           component: 'DemoTopnavWorkspaceDropdown',
@@ -28,8 +28,8 @@ export default defineAppConfig({
           {
             name: 'Dashboard',
             icon: { name: 'ph:gauge-duotone', class: 'w-6 h-6' },
-            activePath: '/dashboards',
-            to: '/dashboards',
+            activePath: '/dashboard',
+            to: '/dashboard',
           },
           {
             name: 'Ujian',

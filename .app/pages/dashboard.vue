@@ -39,6 +39,7 @@ const query = computed(() => {
 //     query,
 //   },
 // )
+
 const data = [
   {
     title: 'Ilmu Pengetahuan Alam',
@@ -68,6 +69,12 @@ const data = [
     <TairoContentWrapper>
       <div class="space-y-10">
         <div>
+          <div class="grid grid-cols-4">
+            <BaseCard class="flex flex-col p-4">
+              <BaseHeading size="md"> Total Ujian & Ulangan </BaseHeading>
+              20
+            </BaseCard>
+          </div>
           <div v-if="data.length === 0">
             <BasePlaceholderPage
               title="No matching results"
