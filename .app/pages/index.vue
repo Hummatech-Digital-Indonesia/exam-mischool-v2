@@ -107,7 +107,8 @@ const onSubmit = handleSubmit(async (values) => {
     <div class="relative flex flex-1 flex-col justify-center px-6 py-12 lg:w-2/5 lg:flex-none">
       <div class="dark:bg-muted-800 relative mx-auto w-full max-w-sm bg-white">
         <div class="flex justify-center mb-10">
-          <img src="/assets/img/Logo-Miscool-High 1.png" alt="" width="250" height="50" class="mb-10">
+          <img src="/assets/img/logo-mischool.png" alt="" width="250" height="50" class="mb-10 block dark:hidden">
+          <img src="/assets/img/logo-mischool-dark.png" alt="" width="250" height="50" class="mb-10 hidden dark:block">
         </div>
         <!--Nav-->
         <div class="flex w-full items-center justify-between">
@@ -136,14 +137,14 @@ const onSubmit = handleSubmit(async (values) => {
                   <BaseInput :model-value="field.value" :error="errorMessage" :disabled="isSubmitting" type="email"
                     label="Email" shape="curved" :classes="{
                       input: 'h-12',
-                    }" @update:model-value="handleChange" @blur="handleBlur" />
+                    }" @update:model-value="handleChange" @blur="handleBlur"/>
                 </Field>
 
                 <Field v-slot="{ field, errorMessage, handleChange, handleBlur }" name="password">
                   <BaseInput :model-value="field.value" :error="errorMessage" :disabled="isSubmitting" type="password"
                     label="Password" shape="curved" :classes="{
                       input: 'h-12',
-                    }" @update:model-value="handleChange" @blur="handleBlur" />
+                    }" @update:model-value="handleChange" @blur="handleBlur"/>
                 </Field>
               </div>
 
