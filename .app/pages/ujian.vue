@@ -91,10 +91,7 @@ const { data, pending, error, refresh } = await useFetch(
                   elevated-hover
                   class="hover:!border-primary-500 p-5"
                 >
-                  <NuxtLink
-                    class="group"
-                    :to="`/layouts/projects/details/${item.slug}`"
-                  >
+                  <NuxtLink class="group">
                     <!-- <div class="p-5"> -->
                     <div class="relative mb-4">
                       <img
@@ -110,34 +107,19 @@ const { data, pending, error, refresh } = await useFetch(
                     <BaseList>
                       <BaseListItem subtitle="Close resubing pending tasks">
                         <Icon
-                          name="ph:check-circle-duotone"
-                          class="text-info-500 size-6"
+                          name="ph:calendar-blank-bold"
+                          class="text-sm size-5"
                         />
                       </BaseListItem>
 
                       <BaseListItem subtitle="Meeting about next project steps">
-                        <Icon
-                          name="ph:timer-duotone"
-                          class="text-success-500 size-6"
-                        />
+                        <Icon name="ph:timer-duotone" class="size-5" />
                       </BaseListItem>
 
                       <BaseListItem
                         subtitle="In preparation of next Friday's party"
                       >
-                        <Icon
-                          name="ph:confetti-duotone"
-                          class="size-6 text-yellow-400"
-                        />
-                      </BaseListItem>
-
-                      <BaseListItem
-                        subtitle="Bill must be paid before next Tuesday"
-                      >
-                        <Icon
-                          name="ph:receipt-duotone"
-                          class="text-danger-500 size-6"
-                        />
+                        <Icon name="ion:clipboard-outline" class="size-5" />
                       </BaseListItem>
                     </BaseList>
                   </NuxtLink>
