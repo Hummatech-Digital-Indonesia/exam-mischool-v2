@@ -1,0 +1,19 @@
+{
+  "private": true,
+  "name": "@cssninja/tairo",
+  "version": "0.0.0",
+  "type": "module",
+  "main": "./nuxt.config.ts",
+  "scripts": {
+    "clean": "rimraf .nuxt .output node_modules"
+  },
+  "dependencies": {
+    "@cssninja/nuxt-toaster": "^0.3.12",
+    "@shuriken-ui/nuxt": "2.0.2",
+    "@vee-validate/zod": "^4.12.5",
+    "fast-copy": "^3.0.1",
+    "nuxt": "^3.10.2",
+    "vee-validate": "^4.12.5",
+    "zod": "^3.22.4"
+  }
+}
