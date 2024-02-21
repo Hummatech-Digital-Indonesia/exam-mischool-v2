@@ -1,4 +1,5 @@
 export default defineNuxtConfig({
+  devtools: { enabled: true },
   extends: [
     /**
      * This extends the base Tairo layer.
@@ -16,7 +17,7 @@ export default defineNuxtConfig({
     /**
      * Uncomment the following line to add the Tairo Layout Sidebar layer
      */
-    // '../layers/tairo-layout-sidebar',
+    '../layers/tairo-layout-topnav',
   ],
 
   /**
