@@ -94,6 +94,15 @@ const onSubmit = handleSubmit(async (values) => {
 
   router.push('/dashboards')
 })
+
+const checked=ref(false)
+const type=ref('password')
+watch(checked, (newType)=>{
+  type.value = (newType)? 'text': 'password'
+})
+// const type = computed(()=>(type)? 'text': 'password')
+// console.log(type);
+
 </script>
 
 <template>
@@ -140,8 +149,8 @@ const onSubmit = handleSubmit(async (values) => {
                     }" @update:model-value="handleChange" @blur="handleBlur"/>
                 </Field>
 
-                <Field v-slot="{ field, errorMessage, handleChange, handleBlur }" name="password">
-                  <BaseInput :model-value="field.value" :error="errorMessage" :disabled="isSubmitting" type="password"
+                <Field v-slot="{ field, errorMessage, handleChange, handleBlur }" name="password" >
+                  <BaseInput :model-value="field.value" :error="errorMessage" :disabled="isSubmitting" :type="type"
                     label="Password" shape="curved" :classes="{
                       input: 'h-12',
                     }" @update:model-value="handleChange" @blur="handleBlur"/>
@@ -150,9 +159,13 @@ const onSubmit = handleSubmit(async (values) => {
 
               <!--Remember-->
               <div class="mt-6 flex items-center justify-between">
-                <Field v-slot="{ field, handleChange, handleBlur }" name="trustDevice">
+                <!-- <Field v-slot="{ field, handleChange, handleBlur }" name="trustDevice">
                   <BaseCheckbox :model-value="field.value" :disabled="isSubmitting" shape="curved"
-                    label="Tampilkan Password" color="primary" @update:model-value="handleChange" @blur="handleBlur" />
+                    label="Tampilkan Password" color="primary" @update:model-value="handleChange" @blur="handleBlur"/>
+                </Field> -->
+                <Field v-slot="{ field, handleChange, handleBlur }" name="trustDevice">
+                  <BaseCheckbox v-model="checked" :disabled="isSubmitting" shape="curved"
+                    label="Tampilkan Password" color="primary" @update:model-value="handleChange" @blur="handleBlur"/>
                 </Field>
 
                 <!-- <div class="text-xs leading-5">
