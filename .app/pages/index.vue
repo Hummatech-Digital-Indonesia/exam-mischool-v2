@@ -7,12 +7,12 @@ definePageMeta({
   layout: 'empty',
   title: 'Login',
   preview: {
-    title: 'Login 2',
+    title: 'Login 1',
     description: 'For authentication and sign in',
     categories: ['layouts', 'authentication'],
-    src: '/img/screens/auth-login-2.png',
-    srcDark: '/img/screens/auth-login-2-dark.png',
-    order: 97,
+    src: '/img/screens/auth-login-1.png',
+    srcDark: '/img/screens/auth-login-1-dark.png',
+    order: 96,
   },
 })
 
@@ -26,7 +26,6 @@ const VALIDATION_TEXT = {
 const zodSchema = z.object({
   email: z.string().email(VALIDATION_TEXT.EMAIL_REQUIRED),
   password: z.string().min(1, VALIDATION_TEXT.PASSWORD_REQUIRED),
-  trustDevice: z.boolean(),
 })
 
 // Zod has a great infer method that will
@@ -37,7 +36,6 @@ const validationSchema = toTypedSchema(zodSchema)
 const initialValues = computed<FormInput>(() => ({
   email: '',
   password: '',
-  trustDevice: false,
 }))
 
 const {
@@ -52,57 +50,52 @@ const {
   setErrors,
 } = useForm({
   validationSchema,
-  // initialValues,
+  //@ts-ignore
+  initialValues,
 })
 
-const router = useRouter()
 const toaster = useToaster()
+const config = useRuntimeConfig()
 
-// This is where you would send the form data to the server
 const onSubmit = handleSubmit(async (values) => {
-  // here you have access to the validated form values
-  console.log('auth-success', values)
 
-  try {
-    // fake delay, this will make isSubmitting value to be true
-    await new Promise((resolve, reject) => {
-      if (values.password !== 'password') {
-        // simulate a backend error
-        setTimeout(
-          () => reject(new Error('Fake backend validation error')),
-          2000,
-        )
-      }
-      setTimeout(resolve, 4000)
-    })
+  const { data: success, error } = await useFetch(`${config.public.apiUrl}/login`, {
+    headers: {
+      'Accept': 'application/json'
+    },
+    method: 'POST',
+    body: values,
+  })
 
-    toaster.clearAll()
+  if (error.value?.statusCode == 500) {
     toaster.show({
-      title: 'Success',
-      message: `Welcome back!`,
-      color: 'success',
-      icon: 'ph:user-circle-fill',
-      closable: true,
+      title: 'Gagal!',
+      message: 'Terjadi kesalahan di sisi server, coba hubungi developer!',
+      icon: 'lucide:alert-octagon',
+      color: 'danger'
     })
-  } catch (error: any) {
-    // this will set the error on the form
-    if (error.message === 'Fake backend validation error') {
-      setFieldError('password', 'Invalid credentials (use "password")')
-    }
-    return
+
+    throw createError({
+      statusCode: 500,
+      statusMessage: 'Server Error'
+    })
+
+  } else {
+    setFieldError('password', error.value?.data.meta.message)
   }
 
-  router.push('/dashboards')
+  if (success.value) {
+    //@ts-ignore
+    localStorage.setItem('token',success.value.data.token);
+    toaster.show({
+      title: 'Sukses!',
+      message: 'Berhasil Login!',
+      icon: 'lucide:check',
+      color: 'success'
+    })
+    navigateTo('/dashboard')
+  }
 })
-
-const checked=ref(false)
-const type=ref('password')
-watch(checked, (newType)=>{
-  type.value = (newType)? 'text': 'password'
-})
-// const type = computed(()=>(type)? 'text': 'password')
-// console.log(type);
-
 </script>
 
 <template>
@@ -110,28 +103,24 @@ watch(checked, (newType)=>{
     <div class="bg-muted-100 dark:bg-muted-900 relative hidden w-0 flex-1 items-center justify-center lg:flex lg:w-3/5">
       <div class="mx-auto w-full h-full flex items-center justify-center max-w-4xl">
         <!--Media image-->
-        <img class="max-w-xl mx-auto" src="/assets/img/04.png" alt="" width="650" height="350" />
+        <img class="max-w-2xl mx-auto" src="/img/illustrations/onboarding/bg-login.png" alt="logo-mischool" />
       </div>
     </div>
     <div class="relative flex flex-1 flex-col justify-center px-6 py-12 lg:w-2/5 lg:flex-none">
       <div class="dark:bg-muted-800 relative mx-auto w-full max-w-sm bg-white">
-        <div class="flex justify-center mb-10">
-          <img src="/assets/img/logo-mischool.png" alt="" width="250" height="50" class="mb-10 block dark:hidden">
-          <img src="/assets/img/logo-mischool-dark.png" alt="" width="250" height="50" class="mb-10 hidden dark:block">
+        <div class="flex justify-center mb-4">
+          <img src="/img/logos/logo-text.png" alt="logo-mischool" width="250" height="50" class="mb-10 block dark:hidden">
+          <img src="/img/logos/logo-text-dark.png" alt="logo-mischool" width="250" height="50"
+            class="mb-10 hidden dark:block">
         </div>
         <!--Nav-->
-        <div class="flex w-full items-center justify-between">
-          <NuxtLink to="/dashboards"
-            class="text-muted-400 hover:text-primary-500 flex items-center gap-2 font-sans font-medium transition-colors duration-300">
-            <Icon name="gg:arrow-long-left" class="h-5 w-5" />
-            <span>Kembali ke Dashboard</span>
-          </NuxtLink>
+        <div class="flex w-full items-center justify-end">
           <!--Theme button-->
           <BaseThemeToggle />
         </div>
         <div>
-          <BaseHeading as="h2" size="3xl" lead="relaxed" weight="medium" class="mt-6 font-medium">
-            Selamat datang
+          <BaseHeading as="h2" size="xl" lead="relaxed" weight="medium" class="mt-6 font-medium">
+            Selamat Datang
           </BaseHeading>
 
         </div>
@@ -146,35 +135,25 @@ watch(checked, (newType)=>{
                   <BaseInput :model-value="field.value" :error="errorMessage" :disabled="isSubmitting" type="email"
                     label="Email" shape="curved" :classes="{
                       input: 'h-12',
-                    }" @update:model-value="handleChange" @blur="handleBlur"/>
+                    }" @update:model-value="handleChange" @blur="handleBlur" />
                 </Field>
 
-                <Field v-slot="{ field, errorMessage, handleChange, handleBlur }" name="password" >
-                  <BaseInput :model-value="field.value" :error="errorMessage" :disabled="isSubmitting" :type="type"
-                    label="Password" shape="curved" :classes="{
+                <Field v-slot="{ field, errorMessage, handleChange, handleBlur }" name="password">
+                  <BaseInput :model-value="field.value" :error="errorMessage" :disabled="isSubmitting" label="Password"
+                    shape="curved" :classes="{
                       input: 'h-12',
-                    }" @update:model-value="handleChange" @blur="handleBlur"/>
+                    }" @update:model-value="handleChange" @blur="handleBlur" />
                 </Field>
               </div>
 
-              <!--Remember-->
+              <!-- show password
               <div class="mt-6 flex items-center justify-between">
-                <!-- <Field v-slot="{ field, handleChange, handleBlur }" name="trustDevice">
-                  <BaseCheckbox :model-value="field.value" :disabled="isSubmitting" shape="curved"
-                    label="Tampilkan Password" color="primary" @update:model-value="handleChange" @blur="handleBlur"/>
-                </Field> -->
-                <Field v-slot="{ field, handleChange, handleBlur }" name="trustDevice">
-                  <BaseCheckbox v-model="checked" :disabled="isSubmitting" shape="curved"
-                    label="Tampilkan Password" color="primary" @update:model-value="handleChange" @blur="handleBlur"/>
+                <Field v-slot="{ field, handleChange, handleBlur }" name="showPassword">
+                  <BaseCheckbox v-model="checked" :disabled="isSubmitting" shape="curved" label="Tampilkan Password"
+                    color="primary" @update:model-value="handleChange" @blur="handleBlur" />
                 </Field>
 
-                <!-- <div class="text-xs leading-5">
-                  <NuxtLink to="/auth/recover"
-                    class="text-primary-600 hover:text-primary-500 font-sans font-medium underline-offset-4 transition duration-150 ease-in-out hover:underline">
-                    Forgot your password?
-                  </NuxtLink>
-                </div> -->
-              </div>
+              </div> -->
 
               <!--Submit-->
               <div class="mt-6">
@@ -186,15 +165,6 @@ watch(checked, (newType)=>{
                 </div>
               </div>
             </form>
-
-            <!-- No account link -->
-            <!-- <p class="text-muted-400 mt-4 flex justify-between font-sans text-xs leading-5">
-              <span>Don't have an account?</span>
-              <NuxtLink to="/auth/signup-2"
-                class="text-primary-600 hover:text-primary-500 font-medium underline-offset-4 transition duration-150 ease-in-out hover:underline">
-                start your 14-day free trial
-              </NuxtLink>
-            </p> -->
           </div>
         </div>
       </div>

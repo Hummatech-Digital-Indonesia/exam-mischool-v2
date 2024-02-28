@@ -1,10 +1,11 @@
+/* eslint-disable prettier-vue/prettier */
 export default defineAppConfig({
   tairo: {
     topnav: {
       navigation: {
         enabled: true,
         logo: {
-          component: 'TairoLogo',
+          component: 'TairoLogoText',
           props: { class: 'text-primary-500 h-10 w-10' },
         },
         header: {
@@ -35,9 +36,9 @@ export default defineAppConfig({
           },
         },
         copyright: {
-          name: '',
-          to: '',
-          since: '',
+          name: 'Hummatech',
+          to: 'https://hummatech.com',
+          since: '2023',
         },
         links: [],
       },

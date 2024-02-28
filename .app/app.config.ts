@@ -22,7 +22,7 @@ export default defineAppConfig({
           props: { class: 'text-primary-600 w-24' },
         },
         header: {
-          component: 'DemoTopnavWorkspaceDropdown',
+          
         },
         items: [
           {
@@ -56,15 +56,6 @@ export default defineAppConfig({
               inverted: true,
             },
           },
-          {
-            component: 'DemoCircularMenuLanguage',
-          },
-          {
-            component: 'DemoCircularMenuNotifications',
-          },
-          {
-            component: 'DemoCircularMenuActivity',
-          },
         ],
       },
       toolbar: {
@@ -76,15 +67,6 @@ export default defineAppConfig({
             props: {
               disableTransitions: true,
             },
-          },
-          {
-            component: 'DemoToolbarSearch',
-          },
-          {
-            component: 'DemoToolbarCustomize',
-          },
-          {
-            component: 'DemoToolbarNotifications',
           },
           {
             component: 'DemoAccountMenu',

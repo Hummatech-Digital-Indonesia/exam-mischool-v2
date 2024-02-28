@@ -1,6 +1,6 @@
 <script setup lang="ts">
 definePageMeta({
-  title: 'Project List',
+  title: 'Ulangan',
   preview: {
     title: 'Project list 3',
     description: 'For displaying a list of projects',
@@ -39,6 +39,16 @@ const query = computed(() => {
 //     query,
 //   },
 // )
+const breadcrumb = [
+  {
+    label: 'Ulangan',
+    hideLabel: false,
+    icon: 'ph:clipboard-duotone',
+    to: '/ulangan',
+  },
+]
+
+
 const data = [
   {
     title: 'Ilmu Pengetahuan Alam',
@@ -65,7 +75,10 @@ const data = [
 
 <template>
   <div>
-    <TairoContentWrapper>
+    <BaseBreadcrumb :items="breadcrumb">
+      <Icon name="lucide:chevron-right" class="block size-3" />
+    </BaseBreadcrumb>
+    <TairoContentWrapper class="mt-8">
       <div class="space-y-10">
         <div>
           <div v-if="data.length === 0">
@@ -88,13 +101,6 @@ const data = [
             </BasePlaceholderPage>
           </div>
           <div v-else>
-            <div>
-              <h4
-                class="text-muted-400 mb-4 font-sans text-xs font-semibold uppercase"
-              >
-                Home
-              </h4>
-            </div>
             <div
               class="ltablet:grid-cols-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
             >
@@ -150,7 +156,7 @@ const data = [
                       size="sm"
                       class="w-full mt-5"
                     >
-                      Detail Ujian
+                      Mulai Ujian
                     </BaseButton>
                   </NuxtLink>
                 </BaseCard>

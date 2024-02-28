@@ -1,16 +1,16 @@
 :root {
   /* violet from tailwind as r g b */
   --color-primary-50: 245 243 255; /* #f5f3ff */
-  --color-primary-100: 237 233 254; /* #ede9fe */
-  --color-primary-200: 221 214 254; /* #ddd6fe */
-  --color-primary-300: 196 181 253; /* #c4b5fd */
-  --color-primary-400: 167 139 250; /* #a78bfa */
-  --color-primary-500: 139 92 246; /* #a855f7 */
-  --color-primary-600: 124 58 237; /* #9333ea */
-  --color-primary-700: 109 40 217; /* #7e22ce */
-  --color-primary-800: 91 33 182; /* #6b21a8 */
-  --color-primary-900: 76 29 149; /* #581c87 */
-  --color-primary-950: 46 16 101; /* #3b0764 */
+  --color-primary-100: 233 234 254; /* #E9EAFE */
+  --color-primary-200: 214 215 254; /* #D6D7FE */
+  --color-primary-300: 184 181 253; /* #B1AEF8 */
+  --color-primary-400: 139 139 250; /* #8B8BFA */
+  --color-primary-500: 93 135 255; /* #5D87FF */
+  --color-primary-600: 63 51 234; /* #3F33EA */
+  --color-primary-700: 42 25 202; /* #2A19CA */
+  --color-primary-800: 52 5 172; /* #3405AC */
+  --color-primary-900: 48 28 135; /* #301C87 */
+  --color-primary-950: 7 7 100; /* #070764 */
 
   /* slate from tailwind as r g b */
   --color-muted-50: 248 250 252; /* #f8fafc */

@@ -6,6 +6,7 @@
 
 export default defineNuxtConfig({
   devtools: { enabled: true },
+  ssr: false,
   extends: [
     /**
      * App layers: these are the layers that contains specific features
@@ -37,7 +38,7 @@ export default defineNuxtConfig({
      * wich is a carousel component used in the demo
      * @see https://github.com/cpreston321/nuxt-swiper
      */
-    'nuxt-swiper',
+    '@nuxt/image'
   ],
   css: [
     '~/assets/css/colors.css',
@@ -68,6 +69,7 @@ export default defineNuxtConfig({
       // mapbox config
       mapboxToken: process.env.NUXT_PUBLIC_MAPBOX_TOKEN,
       siteUrl: process.env.NUXT_PUBLIC_SITE_URL,
+      apiUrl: process.env.API_URL
     },
   },
   // routeRules: {
