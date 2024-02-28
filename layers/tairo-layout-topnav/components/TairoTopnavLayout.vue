@@ -76,17 +76,20 @@ const mainClass = computed(() => {
         <TairoTopnavNavigation v-if="topnavEnabled" :display="props.display" position="fixed">
           <div v-if="config?.navigation?.logo?.component" class="flex h-16 w-full items-center gap-x-4">
             <NuxtLink to="/" class="flex items-center justify-center">
-              <component :is="
+              <component
+:is="
                   resolveComponentOrNative(
                     config?.navigation.logo.component,
                   )
                 " v-bind="config?.navigation.logo.props"></component>
             </NuxtLink>
-            <BaseHeading v-if="config?.toolbar?.showTitle" as="h1" size="lg" weight="light"
+            <BaseHeading
+v-if="config?.toolbar?.showTitle" as="h1" size="lg" weight="light"
               class="text-muted-800 hidden md:block dark:text-white">
               <slot name="title">{{ route.meta.title }}</slot>
             </BaseHeading>
-            <component v-if="config?.navigation?.header?.component" :is="
+            <component
+v-if="config?.navigation?.header?.component" :is="
                 resolveComponentOrNative(
                   config?.navigation?.header?.component,
                 )
@@ -99,7 +102,7 @@ const mainClass = computed(() => {
           </div>
           <template #toolbar>
             <div v-if="toolbarEnabled">
-              <div class="flex items-center justify-end gap-4 mr-3">
+              <div class="mr-3 flex items-center justify-end gap-4">
                 <template v-for="tool of config?.toolbar?.tools">
                   <component :is="tool.component" v-if="tool.component" :key="tool.component" v-bind="tool.props" />
                 </template>
@@ -110,7 +113,8 @@ const mainClass = computed(() => {
       </slot>
 
       <div :class="mainClass">
-        <div class="pt-40 md:pt-36" :class="[
+        <div
+class="pt-40 md:pt-36" :class="[
           props.display === 'condensed' && 'w-full',
           props.display === 'horizontal-scroll' &&
           'mx-auto w-full overflow-x-auto',
