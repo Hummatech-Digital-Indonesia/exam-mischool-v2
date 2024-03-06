@@ -1,3 +1,4 @@
+/* eslint-disable prettier-vue/prettier */
 module.exports = {
     apps: [
       {
@@ -5,7 +6,7 @@ module.exports = {
         port: '5500',
         exec_mode: 'cluster',
         instances: 'max',
-        script: './.output/server/index.mjs'
+        script: './.app/.output/server/index.mjs'
       }
     ]
   };

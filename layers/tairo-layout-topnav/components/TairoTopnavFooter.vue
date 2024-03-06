@@ -48,11 +48,11 @@ const year = new Date().getFullYear()
         class="text-muted-500 dark:text-muted-400 ltablet:w-1/5 ltablet:justify-end ltablet:mt-0 mt-6 flex w-full items-center justify-center text-sm lg:mt-0 lg:w-1/5 lg:justify-end">
         <span v-if="config?.copyright?.name && config?.copyright?.to" class="inline-flex gap-1">
           <span>©</span>
-          <NuxtLink :to="config.copyright.to" target="_blank" rel="noopener"
+          <NuxtLink to="https://hummatech.com" target="_blank" rel="noopener"
             class="text-muted-600 hover:text-primary-500 dark:text-muted-200 dark:hover:text-primary-400 text-sm transition-colors duration-300">
-            {{ config.copyright.name }}
+            hummatech
           </NuxtLink>
-          <span v-if="config?.copyright?.since">{{ config.copyright.since }}-{{ year }}.</span>
+          <span v-if="config?.copyright?.since">2023-{{ year }}.</span>
         </span>
       </div>
     </div>

@@ -7,6 +7,7 @@ interface user {
   id: string
   max_point: number
   name: string
+  email : string
   nis: string
   nisn: string
   photo: string

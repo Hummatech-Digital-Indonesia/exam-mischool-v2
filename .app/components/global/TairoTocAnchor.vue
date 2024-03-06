@@ -53,6 +53,7 @@ const anchor = computed(() => props.id || slug.value)
       :class="props.suffixClasses"
     >
       <slot name="suffix">{{ props.suffix }}</slot>
+
     </span>
   </NuxtLink>
 </template>

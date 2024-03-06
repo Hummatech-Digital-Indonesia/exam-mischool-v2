@@ -6,14 +6,7 @@ import { z } from 'zod'
 definePageMeta({
   layout: 'empty',
   title: 'Login',
-  preview: {
-    title: 'Login 1',
-    description: 'For authentication and sign in',
-    categories: ['layouts', 'authentication'],
-    src: '/img/screens/auth-login-1.png',
-    srcDark: '/img/screens/auth-login-1-dark.png',
-    order: 96,
-  },
+  middleware: 'guest'
 })
 
 const VALIDATION_TEXT = {
@@ -56,6 +49,7 @@ const {
 
 const toaster = useToaster()
 const config = useRuntimeConfig()
+const showPassword = ref(false)
 
 const onSubmit = handleSubmit(async (values) => {
 
@@ -68,16 +62,9 @@ const onSubmit = handleSubmit(async (values) => {
   })
 
   if (error.value?.statusCode == 500) {
-    toaster.show({
-      title: 'Gagal!',
-      message: 'Terjadi kesalahan di sisi server, coba hubungi developer!',
-      icon: 'lucide:alert-octagon',
-      color: 'danger'
-    })
-
-    throw createError({
-      statusCode: 500,
-      statusMessage: 'Server Error'
+    showError({
+        statusCode: 500,
+        statusMessage: "Terjadi kesalahan di sisi server, coba hubungi developer!"
     })
 
   } else {
@@ -86,7 +73,7 @@ const onSubmit = handleSubmit(async (values) => {
 
   if (success.value) {
     //@ts-ignore
-    localStorage.setItem('token',success.value.data.token);
+    localStorage.setItem('token', success.value.data.token);
     toaster.show({
       title: 'Sukses!',
       message: 'Berhasil Login!',
@@ -132,28 +119,26 @@ const onSubmit = handleSubmit(async (values) => {
             <form method="POST" action="" @submit.prevent="onSubmit" class="mt-6" novalidate>
               <div class="space-y-4">
                 <Field v-slot="{ field, errorMessage, handleChange, handleBlur }" name="email">
-                  <BaseInput :model-value="field.value" :error="errorMessage" :disabled="isSubmitting" type="email"
-                    label="Email" shape="curved" :classes="{
+                  <BaseInput icon="ph:envelope-simple-duotone" :model-value="field.value" :error="errorMessage"
+                    :disabled="isSubmitting" type="email" label="Email" shape="curved" :classes="{
                       input: 'h-12',
                     }" @update:model-value="handleChange" @blur="handleBlur" />
                 </Field>
 
                 <Field v-slot="{ field, errorMessage, handleChange, handleBlur }" name="password">
-                  <BaseInput :model-value="field.value" :error="errorMessage" :disabled="isSubmitting" label="Password"
-                    shape="curved" :classes="{
+                  <BaseInput icon="ph:lock-duotone" :model-value="field.value" :error="errorMessage"
+                    :disabled="isSubmitting" label="Password" :type="showPassword ? 'text' : 'password'" shape="curved"
+                    :classes="{
                       input: 'h-12',
                     }" @update:model-value="handleChange" @blur="handleBlur" />
                 </Field>
               </div>
 
-              <!-- show password
               <div class="mt-6 flex items-center justify-between">
-                <Field v-slot="{ field, handleChange, handleBlur }" name="showPassword">
-                  <BaseCheckbox v-model="checked" :disabled="isSubmitting" shape="curved" label="Tampilkan Password"
-                    color="primary" @update:model-value="handleChange" @blur="handleBlur" />
-                </Field>
+                <BaseCheckbox v-model="showPassword" :disabled="isSubmitting" shape="curved" label="Tampilkan Password"
+                  color="primary" />
 
-              </div> -->
+              </div>
 
               <!--Submit-->
               <div class="mt-6">

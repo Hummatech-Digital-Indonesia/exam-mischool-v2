@@ -1,10 +1,11 @@
 export default defineNuxtRouteMiddleware(async (to, from) => {
   const config = useRuntimeConfig()
   const token = localStorage.getItem('token')
+  const route = useRoute()
   const router = useRouter()
 
   const { data: success, error } = await useFetch(
-    `${config.public.apiUrl}/data-student`,
+    `${config.public.apiUrl}/exam/${route.params.slug}`,
     {
       headers: {
         Accept: 'application/json',
@@ -14,9 +15,6 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   )
 
   if (error.value) {
-    router.push('/')
+    return abortNavigation()
   }
-
-  //@ts-ignore
-  localStorage.setItem('user',JSON.stringify(success.value.data));
 })

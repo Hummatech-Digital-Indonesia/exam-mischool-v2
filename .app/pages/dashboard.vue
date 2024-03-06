@@ -1,14 +1,10 @@
 <script setup lang="ts">
+
+import type { exam } from '../types'
+
 definePageMeta({
-  title: 'Project List',
-  middleware : 'auth',
-  preview: {
-    title: 'Project list 3',
-    description: 'For displaying a list of projects',
-    src: '/img/screens/layouts-projects-3.png',
-    srcDark: '/img/screens/layouts-projects-3-dark.png',
-    order: 70,
-  },
+  title: 'Dashboard',
+  middleware: 'auth',
 })
 
 const breadcrumb = [
@@ -21,36 +17,38 @@ const breadcrumb = [
 ]
 
 const route = useRoute()
-const router = useRouter()
 const user = useUserData()
+const config = useRuntimeConfig()
+const token = localStorage.getItem('token')
 
-const page = computed(() => parseInt((route.query.page as string) ?? '1'))
-
-const filter = ref('')
-const perPage = ref(3)
-
-watch([filter, perPage], () => {
-  router.push({
-    query: {
-      page: undefined,
-    },
-  })
-})
-
-const query = computed(() => {
-  return {
-    filter: filter.value,
-    perPage: perPage.value,
-    page: page.value,
-  }
-})
-
-const { data, pending, error, refresh } = await useFetch(
-  '/api/exams',
-  {
-    query,
+interface ExamResponse {
+  meta: {
+    code: number,
+    status: 'success' | 'error',
+    message?: string
   },
-)
+  data: exam[]
+}
+
+const { data, pending, error, refresh } = await useFetch<ExamResponse>(`${config.public.apiUrl}/exam-students`, {
+  headers: {
+    Accept: 'application/json',
+    Authorization: 'Bearer ' + token,
+  },
+  method: 'GET'
+})
+
+function checkTime(startIn: string): boolean {
+  const startInTimestamp = Date.parse(startIn); 
+  const currentTimeStamp = Date.now();
+
+  if (startInTimestamp > currentTimeStamp) {
+    return false
+  } else {
+    return true
+  }
+}
+
 </script>
 
 <template>
@@ -79,7 +77,7 @@ const { data, pending, error, refresh } = await useFetch(
     </div>
 
     <!-- Counter -->
-    <div class="grid grid-cols-12 gap-4">
+    <div class="md:grid grid-cols-12 gap-4 hidden">
       <BaseCard class="p-4 lg:col-span-3 md:col-span-6 col-span-12">
         <div class="mb-1 flex items-center justify-between">
           <BaseHeading as="h5" size="sm" weight="medium" lead="tight" class="text-muted-500 dark:text-muted-400">
@@ -88,7 +86,7 @@ const { data, pending, error, refresh } = await useFetch(
           <BaseIconBox size="xs"
             class="bg-success-100 text-success-500 dark:bg-success-500/20 dark:text-success-400 dark:border-success-500 dark:border-2"
             shape="full">
-            <Icon name="ph:sketch-logo-duotone" class="h-5 w-5" />
+            <Icon name="ph:clipboard-text-duotone" class="h-5 w-5" />
           </BaseIconBox>
         </div>
         <div class="mb-2">
@@ -105,7 +103,7 @@ const { data, pending, error, refresh } = await useFetch(
           <BaseIconBox size="xs"
             class="bg-blue-100 text-blue-500 dark:bg-blue-500/20 dark:text-blue-400 dark:border-blue-500 dark:border-2"
             shape="full">
-            <Icon name="ph:sketch-logo-duotone" class="h-5 w-5" />
+            <Icon name="ph:clipboard-duotone" class="h-5 w-5" />
           </BaseIconBox>
         </div>
         <div class="mb-2">
@@ -122,7 +120,7 @@ const { data, pending, error, refresh } = await useFetch(
           <BaseIconBox size="xs"
             class="bg-red-100 text-red-500 dark:bg-red-500/20 dark:text-red-400 dark:border-red-500 dark:border-2"
             shape="full">
-            <Icon name="ph:sketch-logo-duotone" class="h-5 w-5" />
+            <Icon name="ph:clipboard-text-duotone" class="h-5 w-5" />
           </BaseIconBox>
         </div>
         <div class="mb-2">
@@ -139,7 +137,7 @@ const { data, pending, error, refresh } = await useFetch(
           <BaseIconBox size="xs"
             class="bg-orange-100 text-orange-500 dark:bg-orange-500/20 dark:text-orange-400 dark:border-orange-500 dark:border-2"
             shape="full">
-            <Icon name="ph:sketch-logo-duotone" class="h-5 w-5" />
+            <Icon name="ph:clipboard-duotone" class="h-5 w-5" />
           </BaseIconBox>
         </div>
         <div class="mb-2">
@@ -151,65 +149,94 @@ const { data, pending, error, refresh } = await useFetch(
     </div>
 
     <div>
-      <h4 class="text-muted-400 my-4 font-sans text-xs font-semibold uppercase">
+      <h4 @click="refresh()" class="text-muted-400 my-4 font-sans text-xs font-semibold uppercase">
         Ujian
       </h4>
     </div>
     <!-- Ujian Terbaru -->
     <div>
-      <div v-if="!pending && data?.data.length === 0">
-        <BasePlaceholderPage title="No matching results"
-          subtitle="Looks like we couldn't find any matching results for your search terms. Try other search terms.">
-          <template #image>
-            <img class="block dark:hidden" src="/img/illustrations/placeholders/flat/placeholder-search-7.svg"
-              alt="Placeholder image" />
-            <img class="hidden dark:block" src="/img/illustrations/placeholders/flat/placeholder-search-7-dark.svg"
-              alt="Placeholder image" />
-          </template>
-        </BasePlaceholderPage>
-      </div>
-      <div v-else>
+      <template v-if="pending">
         <div class="ltablet:grid-cols-3 grid w-full gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <BaseCard v-for="item in data?.data" :key="item.id" shape="curved" class="p-4">
+          <BaseCard v-for="i in 3" :key="i" shape="curved" class="p-4">
             <div>
-              <img :src="item.image" :alt="item.name" class="rounded-lg" />
+              <BasePlaceload class="h-72 rounded-md"></BasePlaceload>
             </div>
             <div class="my-4 flex items-center justify-between">
-              <div>
+              <div class="w-full">
                 <h4 class="mb-3 text-muted-800 dark:text-muted-100 font-sans text-base font-medium">
-                  {{ item.name }}
+                  <BasePlaceload class="w-[80%] py-3 rounded-md"></BasePlaceload>
                 </h4>
-                <div class="text-muted-400 flex items-center gap-1 my-4">
-                  <Icon name="ph:calendar-blank-duotone" class="h-4 w-4" />
-                  <p class="font-sans text-sm">
-                    {{ item.dueDate }}
-                  </p>
+                <div class="text-muted-400 flex w-full gap-1 my-4">
+                  <BasePlaceload class="h-4 w-4 rounded-md"></BasePlaceload>
+                  <BasePlaceload class="w-[70%] py-2 rounded-md"></BasePlaceload>
                 </div>
-                <div class="text-muted-400 flex items-center gap-1 my-4">
-                  <Icon name="ph:calendar-blank-duotone" class="h-4 w-4" />
-                  <p class="font-sans text-sm">
-                    {{ item.dueDate }}
-                  </p>
+                <div class="text-muted-400 flex w-full gap-1 my-4">
+                  <BasePlaceload class="h-4 w-4 rounded-md"></BasePlaceload>
+                  <BasePlaceload class="w-[70%] py-2 rounded-md"></BasePlaceload>
                 </div>
-                <div class="text-muted-400 flex items-center gap-1 my-4">
-                  <Icon name="ph:calendar-blank-duotone" class="h-4 w-4" />
-                  <p class="font-sans text-sm">
-                    {{ item.dueDate }}
-                  </p>
+                <div class="text-muted-400 flex w-full gap-1 my-4">
+                  <BasePlaceload class="h-4 w-4 rounded-md"></BasePlaceload>
+                  <BasePlaceload class="w-[70%] py-2 rounded-md"></BasePlaceload>
                 </div>
               </div>
             </div>
-            <div class="flex items-center gap-2">
-              <BaseButton shape="curved" class="w-full bg-primary-500">
-                Mulai Ujian
-              </BaseButton>
+            <div class="flex items-center gap-2 w-full">
+              <BasePlaceload class="w-full rounded-md py-5"></BasePlaceload>
             </div>
           </BaseCard>
         </div>
-        <div class="mt-6">
-          <BasePagination :total-items="data?.total ?? 0" :item-per-page="perPage" :current-page="page" shape="curved" />
+      </template>
+      <template v-else>
+        <div v-if="data?.data.length === 0">
+          <BasePlaceholderPage title="Ujian tidak ditemukan" subtitle="Sepertinya sedang tidak ada ujian saat ini.">
+            <template #image>
+              <img class="block dark:hidden" src="/img/illustrations/placeholders/flat/placeholder-search-7.svg"
+                alt="Placeholder image" />
+              <img class="hidden dark:block" src="/img/illustrations/placeholders/flat/placeholder-search-7-dark.svg"
+                alt="Placeholder image" />
+            </template>
+          </BasePlaceholderPage>
         </div>
-      </div>
+        <div v-else>
+          <div class="ltablet:grid-cols-3 grid w-full gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <BaseCard v-for="item in data?.data" :key="item.id" shape="curved" class="p-4">
+              <div>
+                <img :src="getRandomImage()" :alt="item.name" class="rounded-lg" />
+              </div>
+              <div class="my-4 flex items-center justify-between">
+                <div>
+                  <h4 class="mb-3 text-muted-800 dark:text-muted-100 font-sans text-base font-medium">
+                    {{ item.name }}
+                  </h4>
+                  <div class="text-muted-400 flex items-center gap-1 my-4">
+                    <Icon name="ph:book-duotone" class="h-4 w-4 rounded-md" />
+                    <p class="font-sans text-sm">
+                      Mapel : {{ item.lesson }}
+                    </p>
+                  </div>
+                  <div class="text-muted-400 flex items-center gap-1 my-4">
+                    <Icon name="ph:calendar-check-duotone" class="h-4 w-4" />
+                    <p class="font-sans text-sm">
+                      Mulai : {{ item.start_at }}
+                    </p>
+                  </div>
+                  <div class="text-muted-400 flex items-center gap-1 my-4">
+                    <Icon name="ph:calendar-x-duotone" class="h-4 w-4" />
+                    <p class="font-sans text-sm">
+                      Selesai : {{ item.end_at }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <BaseButton :to="checkTime(item.start_in) ? `/ujian/${item.slug}` : ''" shape="curved" :disabled="!checkTime(item.start_in)" :color="checkTime(item.start_in) ? 'primary' : 'warning'" class="w-full">
+                  {{ checkTime(item.start_in) ? 'Mulai Ujian' : 'Segera Dimulai' }}
+                </BaseButton>
+              </div>
+            </BaseCard>
+          </div>
+        </div>
+      </template>
     </div>
 
   </div>

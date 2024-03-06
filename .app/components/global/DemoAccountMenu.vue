@@ -10,6 +10,7 @@ const toaster = useToaster()
 const user = useUserData()
 const isProccess = ref(false)
 const token = localStorage.getItem('token')
+const router = useRouter()
 
 const logout = async () => {
   isProccess.value = true
@@ -31,30 +32,14 @@ const logout = async () => {
       icon: 'lucide:check',
       color: 'success'
     })
-    navigateTo('/')
-
+    router.push('/')
     return
   }
 
-  if (error.value?.statusCode == 500) {
-    toaster.show({
-      title: 'Gagal!',
-      message: 'Terjadi kesalahan di sisi server, coba hubungi developer!',
-      icon: 'lucide:alert-octagon',
-      color: 'danger'
-    })
-
-    throw createError({
-      statusCode: 500,
-      statusMessage: 'Server Error'
-    })
-
-  } else {
-    toaster.show({
-      title: 'Gagal!',
-      message: error.value?.message,
-      icon: 'lucide:alert-octagon',
-      color: 'danger'
+  if (error.value) {
+    showError({
+      statusCode: error.value.statusCode,
+      statusMessage: error.value.statusCode == 500 ? "Terjadi kesalahan di sisi server, coba hubungi developer!" : error.value.message
     })
   }
 }
@@ -95,7 +80,7 @@ const logout = async () => {
           </div>
           <div class="p-2">
             <MenuItem as="div" v-slot="{ active }">
-            <NuxtLink to="/layouts/profile"
+            <NuxtLink to="/profile"
               class="group flex w-full items-center rounded-md p-3 text-sm transition-colors duration-300" :class="[
                 active
                   ? 'bg-muted-100 dark:bg-muted-700 text-primary-500'

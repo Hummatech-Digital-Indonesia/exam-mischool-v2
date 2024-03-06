@@ -9,6 +9,7 @@
     "pnpm": ">=8"
   },
   "scripts": {
+    "start" : "node .app/.output/server/index.mjs",
     "dev": "nuxi dev .app --open",
     "build": "nuxi build .app",
     "generate": "nuxi generate .app",
