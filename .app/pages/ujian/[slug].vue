@@ -8,19 +8,13 @@ definePageMeta({
 })
 
 const route = useRoute()
+const router = useRouter()
 const config = useRuntimeConfig()
 const token = localStorage.getItem('token')
-const status = useState('exam-status', () => checkExamSession(route.params.slug.toString()))
+const status = useState<boolean | string>('exam-status', () => checkExamSession(route.params.slug.toString()))
 const isModalWarningOpen = useState('last-submit', () => false)
 const isModalCheatingOpen = useState('cheating-detector', () => false)
 
-const pages = computed(() => {
-    if (status.value) {
-        return 'ExamAnswering'
-    }
-
-    return 'ExamToken'
-})
 const slug: string = route.params.slug.toString()
 
 interface ExamResponse {
@@ -47,6 +41,17 @@ if (error.value?.statusCode == 404) {
     })
 }
 
+const pages = computed(() => {
+
+    if(success.value?.data.finished || status.value == 'done') return 'ExamFinish'
+    
+    if (status.value) return 'ExamAnswering'
+    
+    return 'ExamToken'
+})
+
+
+
 const breadcrumb = [
     {
         label: 'Ulangan',
@@ -69,7 +74,7 @@ const breadcrumb = [
             <Icon name="lucide:chevron-right" class="block size-3" />
         </BaseBreadcrumb>
 
-        <BaseButton color="primary" @click="showError('error')">
+        <BaseButton @click="router.back()" color="primary">
             <Icon name="ph:arrow-left-bold" class="-ms-1 size-4" />
             <span>Button</span>
         </BaseButton>

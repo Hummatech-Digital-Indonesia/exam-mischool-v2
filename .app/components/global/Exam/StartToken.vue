@@ -58,7 +58,7 @@ const onSubmit = handleSubmit(async (values) => {
 
   } else {
     //@ts-ignore
-    setFieldError('token', error.value?.meta.message)
+    setFieldError('token', error.value?.data.meta.message)
   }
 
   if (success.value) {
@@ -68,6 +68,8 @@ const onSubmit = handleSubmit(async (values) => {
     localStorage.setItem(`multiple-choice-${props.slug}`,JSON.stringify(success.value.data.question_multiple_choice))
     //@ts-ignore
     localStorage.setItem(`essay-${props.slug}`,JSON.stringify(success.value.data.question_essay))
+    //@ts-ignore
+    localStorage.setItem(`deadline-${props.slug}`,JSON.stringify(success.value.data.student_exam.deadline))
     toaster.show({
       title: 'Sukses!',
       message: 'Selamat Mengerjakan!',
@@ -81,7 +83,7 @@ const onSubmit = handleSubmit(async (values) => {
 </script>
 
 <template>
-        <BaseCard shape="curved" elevated-hover class="hover:!border-primary-500 col-span-12 lg:col-span-4 overflow-hidden">
+    <BaseCard shape="curved" elevated-hover class="hover:!border-primary-500 col-span-12 lg:col-span-4 overflow-hidden">
       <div class="bg-primary-500 py-2 w-full text-center">
         <BaseHeading as="h4" size="lg" weight="semibold" class="text-white">
           Masukkan Token

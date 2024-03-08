@@ -39,7 +39,10 @@ const { data, pending, error, refresh } = await useFetch<ExamResponse>(`${config
   method: 'GET'
 })
 
-function getButtonText(startIn: string): string {
+function getButtonText(startIn : string,finished : string): string {
+
+  if(finished != '') return 'Selesai..'
+
   const startInTimestamp = Date.parse(startIn); 
   const currentTimeStamp = Date.now();
 
@@ -50,14 +53,28 @@ function getButtonText(startIn: string): string {
   }
 }
 
-function getButtonColor(startIn: string): 'warning' | 'primary' {
+function buttonClass(startIn: string, finished : string) {
   const startInTimestamp = Date.parse(startIn); 
   const currentTimeStamp = Date.now();
+  let color : 'warning' | 'primary' | 'success' = 'primary'
+  let disabled : boolean = false
+  let variant : 'solid' | 'outline' = 'solid'
 
-  if (startInTimestamp > currentTimeStamp) {
-    return 'warning'
-  } else {
-    return 'primary'
+  if (startInTimestamp > currentTimeStamp){
+    color = 'warning'
+    disabled = true
+  }
+
+  if(finished != '') {
+    color = 'success'
+    disabled = true
+    variant = 'outline'
+  }
+
+  return {
+    color : color,
+    disabled : disabled,
+    variant : variant
   }
 }
 </script>
@@ -143,8 +160,8 @@ function getButtonColor(startIn: string): 'warning' | 'primary' {
                 </div>
               </div>
               <div class="flex items-center gap-2">
-                <BaseButton :to="`/ujian/${item.slug}`" shape="curved" :disabled="getButtonColor(item.start_in) == 'warning'" :color="getButtonColor(item.start_in)" class="w-full">
-                  {{ getButtonText(item.start_in) }}
+                <BaseButton :to="`/ujian/${item.slug}`" shape="curved" v-bind="buttonClass(item.start_in,item.finished)" class="w-full">
+                  {{ getButtonText(item.start_in,item.finished) }}
                 </BaseButton>
               </div>
             </BaseCard>

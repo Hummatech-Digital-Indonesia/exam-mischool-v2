@@ -1,59 +1,54 @@
 <script setup lang="ts">
-import type { exam } from '../../../types'
+import type { dailyExam, question } from '../../../types'
 
-const props = defineProps<exam>()
+const props = defineProps<dailyExam>()
 const config = useRuntimeConfig()
 const toaster = useToaster()
-const status = useState<boolean | string>('exam-status', () => checkExamSession(props.slug))
+const route = useRoute()
+const token = localStorage.getItem('token')
+const status = useState<boolean | string>('daily-exam-status', () => checkExamSession(route.params.slug.toString()))
 
-interface question {
-    lesson: string,
-    level: string,
-    employee: string,
-    school_year: string,
-    question: string,
-    option1: string,
-    option2: string,
-    option3: string,
-    option4: string,
-    option5: string,
-    question_number: string
+interface ResponseDailyExam {
+    meta: {
+        code: number
+        status: 'success' | 'error'
+        message?: string
+    },
+    data: {
+        question_multiple_choice: question[]
+        question_essay: question[]
+        daily_exam: dailyExam
+        deadline : string
+    }
 }
 
+const { data: dailyExam, error } = await useFetch<ResponseDailyExam>(`${config.public.apiUrl}/take-daily-exam/${props.id}`, {
+    headers: {
+        Accept: 'application/json',
+        Authorization: 'Bearer ' + token
+    },
+    method: 'GET',
+})
+
+if (error.value) {
+    showError({
+        statusCode: error.value.statusCode,
+        statusMessage: error.value.statusCode == 404 ? 'Ulangan tidak ditemukan' : "Terjadi kesalahan di sisi server, coba hubungi developer!"
+    })
+}
+
+const multipleChoice = dailyExam.value?.data.question_multiple_choice!
+const essay = dailyExam.value?.data.question_essay!
 
 const LOCAL_STORAGE_ITEM = {
-    ESSAY_QUESTION: `essay-${props.slug}`,
-    MULTIPLE_CHOICE_QUESTION: `multiple-choice-${props.slug}`,
-    EXAM_STATUS: `exam-${props.slug}`,
-    ANSWER_ESSAY: `ans-essay-${props.slug}`,
-    ANSWER_MULTIPLE_CHOICE: `ans-mc-${props.slug}`,
-    BADGE_MULTIPLE_CHOICE: `badge-mc-${props.slug}`,
-    BADGE_ESSAY: `badge-essay-${props.slug}`,
-    CURRENT_NUMBER: `current-number-${props.slug}`,
-    CURRENT_TAB: `current-tab-${props.slug}`,
-    DEADLINE : `deadline-${props.slug}`
+    ANSWER_ESSAY: `ans-essay-${props.id}`,
+    ANSWER_MULTIPLE_CHOICE: `ans-mc-${props.id}`,
+    BADGE_MULTIPLE_CHOICE: `badge-mc-${props.id}`,
+    BADGE_ESSAY: `badge-essay-${props.id}`,
+    CURRENT_NUMBER: `current-number-${props.id}`,
+    CURRENT_TAB: `current-tab-${props.id}`,
 }
 
-// mengambil soal dari storage
-const storageEssay: string | null = localStorage.getItem(LOCAL_STORAGE_ITEM.ESSAY_QUESTION)
-const storageMultipleChoice: string | null = localStorage.getItem(LOCAL_STORAGE_ITEM.MULTIPLE_CHOICE_QUESTION)
-
-let isEssayValid: boolean = true
-let isMultipleChoiceValid: boolean = true
-
-// mengecek apakah ada soal yang hilang
-if (props.total_essay > 0 && storageEssay == null) isEssayValid = false
-if (props.total_multiple_choice > 0 && storageMultipleChoice == null) isMultipleChoiceValid = false
-
-// jika ada soal yang kurang, kembali memasukkan token
-if (!isEssayValid || !isMultipleChoiceValid) {
-    localStorage.removeItem(LOCAL_STORAGE_ITEM.EXAM_STATUS)
-    status.value = false
-}
-
-//convert ke json
-const essay: question[] = JSON.parse(storageEssay!)
-const multipleChoice: question[] = JSON.parse(storageMultipleChoice!)
 
 //ambil jawaban dan badge dari storage
 const storageAnswerMultipleChoice: string | null = localStorage.getItem(LOCAL_STORAGE_ITEM.ANSWER_MULTIPLE_CHOICE)
@@ -71,9 +66,7 @@ const badgeMultipleChoice = ref<boolean[]>([])
 const badgeEssay = ref<boolean[]>([])
 const currentNumber = ref<number>(0)
 const currentTab = ref<'essay' | 'multiple-choice'>(multipleChoice.length > 0 ? 'multiple-choice' : 'essay')
-const token = localStorage.getItem('token')
 const isSubmitting = ref<boolean>(false)
-const deadline = props.deadline ? props.deadline : JSON.parse(localStorage.getItem(LOCAL_STORAGE_ITEM.DEADLINE)!)
 
 // ganti nilai dari localStorage jika ada
 if (storageAnswerEssay != null) {
@@ -268,7 +261,7 @@ const isDone = (): boolean => {
 async function sendAnswer() {
     isSubmitting.value = true
 
-    const { data: success, error } = await useFetch(`${config.public.apiUrl}/answer-student-exam/${props.id}?_method=PUT`, {
+    const { data: success, error } = await useFetch(`${config.public.apiUrl}/answer-daily-exam/${props.id}?_method=PUT`, {
         headers: {
             Accept: 'application/json',
             Authorization: 'Bearer ' + token
@@ -298,15 +291,14 @@ async function sendAnswer() {
     }
 
     if (success.value) {
-        //@ts-ignore
         toaster.show({
             title: 'Sukses!',
             message: 'Berhasil Mengirim Jawaban!',
             icon: 'lucide:check',
             color: 'success'
         })
-
-       status.value = 'done'
+        
+        status.value = 'done'
     }
 }
 
@@ -323,15 +315,6 @@ const onSubmit = async () => {
         return
     }
 
-    if (props.last_submit) {
-        const isAbleSubmit = useState('able-submit', () => false)
-        if (!isAbleSubmit.value) {
-            const isModalWarningOpen = useState('last-submit', () => false)
-            isModalWarningOpen.value = true
-            return
-        }
-    }
-
     sendAnswer()
 }
 
@@ -341,18 +324,6 @@ watch(timeOver, (newValue) => {
     if (newValue) sendAnswer()
 })
 
-if (props.cheating_detector) {
-    window.addEventListener('blur', function () {
-        const isModalCheatingOpen = useState('cheating-detector',() => false)
-        const examStatus = useState('exam-status', () => checkExamSession(props.slug))
-        const component = useState('token-component', () => 'ExamStartToken')
-        localStorage.setItem('punishment','active')
-        component.value = 'ExamPunishmentToken'
-        localStorage.removeItem(`exam-${props.slug}`)
-        examStatus.value = false
-        isModalCheatingOpen.value = true
-    })
-}
 </script>
 
 <template>
@@ -392,7 +363,7 @@ if (props.cheating_detector) {
                         <span>{{ currentNumber + 1 }} Dari {{ props.total_essay + props.total_multiple_choice }}
                             Soal</span>
                     </BaseButton>
-                    <ExamTimer :deadline="deadline" :last-submit="props.last_submit" />
+                    <ExamTimer :deadline="dailyExam!.data.deadline" :last-submit="false" />
                 </div>
                 <div class="p-5">
                     <BaseParagraph class="mb-4 !text-slate-800 dark:!text-white" v-html="currentQuestion.question">
