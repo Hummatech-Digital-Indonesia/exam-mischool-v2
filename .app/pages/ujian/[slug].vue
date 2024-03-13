@@ -150,12 +150,11 @@ const breadcrumb = [
                 </div>
 
                 <h3 class="font-heading text-muted-800 text-lg font-medium leading-6 dark:text-white">
-                    Belum bisa mengumpulkan ujian.
+                    Anda Terdeteksi Membuka Tab Lain
                 </h3>
 
                 <p class="font-alt text-muted-500 dark:text-muted-400 text-sm leading-5">
-                    Ujian hanya bisa dikumpulkan 5 menit sebelum waktu berakhir, tolong periksa lagi jawaban anda baik
-                    baik
+                    Segera hubungi pengawas ujian / admin ujian di sekolah anda , lalu masukkan token yang baru.
                 </p>
             </div>
         </div>

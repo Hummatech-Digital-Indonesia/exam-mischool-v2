@@ -136,21 +136,25 @@ function navigateEssay(number: number): void {
 }
 
 function previousQuestion(): void {
-    if(currentTab.value == 'essay' && props.total_multiple_choice > 0){
+    if(currentTab.value == 'essay' && props.total_multiple_choice > 0 && currentNumber.value == 0){
         currentNumber.value = props.total_multiple_choice - 1
         currentTab.value = 'multiple-choice'
     }else{
         currentNumber.value--
     }
+
+    currentQuestion.value = essay[currentNumber.value]
 }
 
 function nextQuestion(): void {
-    if(currentTab.value == 'multiple-choice' && props.total_essay > 0){
+    if(currentTab.value == 'multiple-choice' && props.total_essay > 0 && currentNumber.value == props.total_multiple_choice - 1){
         currentTab.value = 'essay'
         currentNumber.value = 0
     }else{
         currentNumber.value++
     }
+
+    currentQuestion.value = essay[currentNumber.value]
 }
 
 function disabledPrevious() {
@@ -359,7 +363,7 @@ if (props.cheating_detector) {
     <div class="grid grid-cols-12 gap-4">
         <div class="col-span-12 lg:col-span-9">
             <!-- Header -->
-            <div class="bg-primary-800 flex flex-col items-center rounded-md p-4 sm:flex-row mb-6">
+            <div class="bg-primary-800 lg:flex items-center rounded-md p-4 hidden mb-6">
                 <div class="relative h-[168px] w-[280px] shrink-0">
                     <img class="pointer-events-none absolute -start-6 -top-20 block dark:hidden sm:-start-10"
                         src="/img/illustrations/placeholders/flat/placeholder-search-1-dark.svg"
@@ -389,31 +393,31 @@ if (props.cheating_detector) {
             <BaseCard shape="curved" class="overflow-hidden flex flex-col">
                 <div class="w-full bg-primary-500 p-3 flex justify-between">
                     <BaseButton class="flex gap-2 font-semibold">
-                        <span>{{ currentNumber + 1 }} Dari {{ props.total_essay + props.total_multiple_choice }}
+                        <span>{{ currentTab == 'essay' ? props.total_multiple_choice + currentNumber + 1 : currentNumber + 1 }} Dari {{ props.total_essay + props.total_multiple_choice }}
                             Soal</span>
                     </BaseButton>
                     <ExamTimer :deadline="deadline" :last-submit="props.last_submit" />
                 </div>
                 <div class="p-5">
                     <BaseParagraph class="mb-4 !text-slate-800 dark:!text-white" v-html="currentQuestion.question">
-
+                        
                     </BaseParagraph>
                     <div class="flex flex-col gap-4" v-if="currentTab == 'multiple-choice'">
                         <BaseRadio :disabled="isSubmitting" v-model="answerMultipleChoice[currentNumber]"
                             color="primary" name="checkbox_colors" value="option1"><span
-                                v-html="currentQuestion.option1"></span></BaseRadio>
+                                class="!text-slate-800 dark:!text-white" v-html="currentQuestion.option1"></span></BaseRadio>
                         <BaseRadio :disabled="isSubmitting" v-model="answerMultipleChoice[currentNumber]"
                             color="primary" name="checkbox_colors" value="option2"><span
-                                v-html="currentQuestion.option2"></span></BaseRadio>
+                                class="!text-slate-800 dark:!text-white" v-html="currentQuestion.option2"></span></BaseRadio>
                         <BaseRadio :disabled="isSubmitting" v-model="answerMultipleChoice[currentNumber]"
                             color="primary" name="checkbox_colors" value="option3"><span
-                                v-html="currentQuestion.option3"></span></BaseRadio>
+                                class="!text-slate-800 dark:!text-white" v-html="currentQuestion.option3"></span></BaseRadio>
                         <BaseRadio :disabled="isSubmitting" v-model="answerMultipleChoice[currentNumber]"
                             color="primary" name="checkbox_colors" value="option4"><span
-                                v-html="currentQuestion.option4"></span></BaseRadio>
+                                class="!text-slate-800 dark:!text-white" v-html="currentQuestion.option4"></span></BaseRadio>
                         <BaseRadio :disabled="isSubmitting" v-model="answerMultipleChoice[currentNumber]"
                             color="primary" name="checkbox_colors" value="option5"><span
-                                v-html="currentQuestion.option5"></span></BaseRadio>
+                                class="!text-slate-800 dark:!text-white" v-html="currentQuestion.option5"></span></BaseRadio>
                     </div>
                     <div class="w-full" v-else-if="currentTab == 'essay'">
                         <BaseTextarea :disabled="isSubmitting" v-model="answerEssay[currentNumber]" :rows="10"
