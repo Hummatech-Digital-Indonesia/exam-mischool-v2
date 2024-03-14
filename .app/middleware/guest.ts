@@ -1,21 +1,19 @@
 export default defineNuxtRouteMiddleware(async (to, from) => {
-    const config = useRuntimeConfig()
-    const token = localStorage.getItem('token')
-    const route = useRoute()
-    const router = useRouter()
-  
-    const { data: success, error } = await useFetch(
-      `${config.public.apiUrl}/exam/${route.params.slug}`,
-      {
-        headers: {
-          Accept: 'application/json',
-          Authorization: 'Bearer ' + token,
-        },
+  const config = useRuntimeConfig()
+  const token = localStorage.getItem('token')
+  const router = useRouter()
+
+  const { data: success, error } = await useFetch(
+    `${config.public.apiUrl}/data-student`,
+    {
+      headers: {
+        Accept: 'application/json',
+        Authorization: 'Bearer ' + token,
       },
-    )
-  
-    if (success.value) {
-      return abortNavigation()
-    }
-  })
-  
+    },
+  )
+
+  if (success.value) {
+    router.push('/dashboard')
+  }
+})
