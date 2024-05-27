@@ -143,7 +143,11 @@ function previousQuestion(): void {
         currentNumber.value--
     }
 
-    currentQuestion.value = essay[currentNumber.value]
+    if(currentTab.value == 'essay'){
+        currentQuestion.value = essay[currentNumber.value]
+    }else{
+        currentQuestion.value = multipleChoice[currentNumber.value]
+    }
 }
 
 function nextQuestion(): void {
@@ -154,7 +158,11 @@ function nextQuestion(): void {
         currentNumber.value++
     }
 
-    currentQuestion.value = essay[currentNumber.value]
+    if(currentTab.value == 'essay'){
+        currentQuestion.value = essay[currentNumber.value]
+    }else{
+        currentQuestion.value = multipleChoice[currentNumber.value]
+    }
 }
 
 function disabledPrevious() {
@@ -302,6 +310,9 @@ async function sendAnswer() {
     }
 
     if (success.value) {
+
+        localStorage.setItem('started',success.value.data.started)
+        localStorage.setItem('finished',success.value.data.finished)
         //@ts-ignore
         toaster.show({
             title: 'Sukses!',

@@ -12,7 +12,6 @@ definePageMeta({
 })
 
 const user = useUserData()
-console.log(user)
 </script>
 
 <template>
@@ -66,7 +65,7 @@ console.log(user)
                     label="Nama"
                     type="text"
                     icon="ph:user-duotone"
-                    placeholder="Exam : Jhonny Plate"
+                    placeholder="Ex : Jhonny Plate"
                   />
             </div>
               <div class="col-span-12">

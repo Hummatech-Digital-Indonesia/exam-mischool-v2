@@ -35,10 +35,12 @@ const { data: success, error, pending } = await useFetch<ExamResponse>(`${config
 })
 
 if (error.value?.statusCode == 404) {
+
     showError({
         statusCode: 404,
         statusMessage: "Page Not Found"
     })
+
 }
 
 const pages = computed(() => {
@@ -49,8 +51,6 @@ const pages = computed(() => {
     
     return 'ExamToken'
 })
-
-
 
 const breadcrumb = [
     {
@@ -76,7 +76,7 @@ const breadcrumb = [
 
         <BaseButton @click="router.back()" color="primary">
             <Icon name="ph:arrow-left-bold" class="-ms-1 size-4" />
-            <span>Button</span>
+            <span>Kembali</span>
         </BaseButton>
     </div>
     <template v-if="!pending">

@@ -129,20 +129,32 @@ function navigateEssay(number: number): void {
 }
 
 function previousQuestion(): void {
-    if(currentTab.value == 'essay' && props.total_multiple_choice > 0){
+    if(currentTab.value == 'essay' && props.total_multiple_choice > 0 && currentNumber.value == 0){
         currentNumber.value = props.total_multiple_choice - 1
         currentTab.value = 'multiple-choice'
     }else{
         currentNumber.value--
     }
+
+    if(currentTab.value == 'essay'){
+        currentQuestion.value = essay[currentNumber.value]
+    }else{
+        currentQuestion.value = multipleChoice[currentNumber.value]
+    }
 }
 
 function nextQuestion(): void {
-    if(currentTab.value == 'multiple-choice' && props.total_essay > 0){
+    if(currentTab.value == 'multiple-choice' && props.total_essay > 0 && currentNumber.value == props.total_multiple_choice - 1){
         currentTab.value = 'essay'
         currentNumber.value = 0
     }else{
         currentNumber.value++
+    }
+
+    if(currentTab.value == 'essay'){
+        currentQuestion.value = essay[currentNumber.value]
+    }else{
+        currentQuestion.value = multipleChoice[currentNumber.value]
     }
 }
 
@@ -291,6 +303,10 @@ async function sendAnswer() {
     }
 
     if (success.value) {
+
+        localStorage.setItem('started',success.value.data.start_working)
+        localStorage.setItem('finished',success.value.data.end_working)
+
         toaster.show({
             title: 'Sukses!',
             message: 'Berhasil Mengirim Jawaban!',

@@ -2,6 +2,9 @@
 import type { exam } from '../../../types'
 const props = defineProps<exam>()
 const router = useRouter()
+
+const started = localStorage.getItem('started')
+const finished = localStorage.getItem('finished')
 </script>
 
 <template>
@@ -50,13 +53,13 @@ const router = useRouter()
                     <div class="text-muted-700 dark:text-muted-400 flex items-start gap-1 my-4">
                         <Icon name="ph:calendar-check-duotone" class="h-4 w-4" />
                         <p class="font-sans text-sm">
-                            Mulai Mengerjakan : {{ props.started }}
+                            Mulai Mengerjakan : {{ props.started ? props.started : started }}
                         </p>
                     </div>
                     <div class="text-muted-700 dark:text-muted-400 flex items-start gap-1 my-4">
                         <Icon name="ph:calendar-x-duotone" class="h-4 w-4" />
                         <p class="font-sans text-sm">
-                            Selesai Mengerjakan : {{ props.finished }}
+                            Selesai Mengerjakan : {{ props.finished ? props.finished : finished }}
                         </p>
                     </div>
                 </div>

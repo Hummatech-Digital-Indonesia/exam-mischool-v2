@@ -8,6 +8,7 @@ const {
   open,
   close,
 } = usePanels()
+
 </script>
 
 <template>
